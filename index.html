@@ -3,99 +3,139 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EverMe</title>
+<title>EverMe — Digital Lives</title>
+
 <style>
-body {
-margin: 0;
-font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-background: #f5f5f5;
-color: #333;
-}
-header {
-background: #222;
-color: #fff;
-padding: 20px;
-text-align: center;
-}
-header h1 {
-margin: 0;
-font-size: 28px;
-}
-header p {
-margin: 5px 0 0;
-font-size: 14px;
-color: #ccc;
-}
-.container {
-max-width: 1000px;
-margin: 30px auto;
-padding: 20px;
-}
-.nav {
-display: flex;
-gap: 15px;
-justify-content: center;
-margin-bottom: 20px;
-}
-.nav button {
-padding: 10px 20px;
-border: none;
-border-radius: 8px;
-background: #222;
-color: #fff;
-cursor: pointer;
-transition: 0.2s;
-}
-.nav button:hover {
-background: #444;
-}
-.section {
-display: none;
-margin-top: 20px;
-}
-.section.active {
-display: block;
-}
-.profile-grid {
-display: grid;
-grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-gap: 20px;
-}
-.profile-square {
-width: 100%;
-padding-bottom: 100%;
-background: #000;
-border-radius: 8px;
-position: relative;
-cursor: pointer;
-transition: 0.3s;
-}
-.profile-square::after {
-content: '+';
-color: white;
-font-size: 36px;
-position: absolute;
-top: 50%;
-left: 50%;
-transform: translate(-50%, -50%);
-display: none;
-}
-.profile-square.flipped {
-background: #fff;
-}
-.profile-square.flipped::after {
-display: block;
-}
-.profile-detail {
-text-align: center;
-margin-top: 20px;
-}
-.profile-detail img {
-width: 150px;
-border-radius: 12px;
-}
-.about, .contact {
-background: #fff;
-padding: 20px;
-border-radius: 12px;
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #ffffff;
+    color: #111;
+    overflow-x: hidden;
+  }
+
+  header {
+    text-align: center;
+    padding: 40px 10px;
+    background: #000;
+    color: #fff;
+  }
+
+  header h1 {
+    margin: 0;
+    font-size: 42px;
+    font-weight: bold;
+  }
+
+  header p {
+    margin-top: 10px;
+    font-size: 16px;
+    color: #ccc;
+  }
+
+  /* MAIN GRID OF BLACK SQUARES */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 12px;
+    padding: 20px;
+  }
+
+  .square {
+    width: 100%;
+    padding-bottom: 100%;
+    background: #000;
+    position: relative;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+
+  .square.active {
+    background: #fff;
+    border: 2px solid #000;
+  }
+
+  .square.active::after {
+    content: "+";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 42px;
+    color: #000;
+    font-weight: bold;
+  }
+
+  /* ABOUT SECTION */
+  .section {
+    padding: 40px 20px;
+    max-width: 800px;
+    margin: auto;
+  }
+
+  h2 {
+    margin-top: 0;
+    font-size: 28px;
+  }
+
+  footer {
+    padding: 20px;
+    background: #000;
+    color: #fff;
+    text-align: center;
+    margin-top: 40px;
+  }
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>EverMe</h1>
+  <p>Digital Lives — Every Life Matters</p>
+</header>
+
+<!-- GRID OF SQUARES -->
+<div class="grid" id="grid"></div>
+
+<!-- ABOUT -->
+<div class="section" id="about">
+  <h2>About EverMe</h2>
+  <p>
+    EverMe is a digital space designed to preserve human presence beyond time.
+    A minimalist world where every person can leave a trace: a face, a memory, a thought.
+    No social noise. No endless scrolling. No addictive algorithms.
+    Just pure existence — recorded forever.
+  </p>
+</div>
+
+<!-- CONTACT -->
+<div class="section" id="contact">
+  <h2>Contact Us</h2>
+  <p>Email: support@everme.com</p>
+  <p>For partnerships, ideas, or collaboration, feel free to reach out.</p>
+</div>
+
+<footer>
+  © 2025 EverMe — All rights reserved.
+</footer>
+
+<script>
+  // Create a large number of squares
+  const grid = document.getElementById("grid");
+
+  for (let i = 0; i < 120; i++) {
+    const sq = document.createElement("div");
+    sq.className = "square";
+
+    sq.addEventListener("click", () => {
+      sq.classList.toggle("active");
+      // later we can open a profile creation modal here
+    });
+
+    grid.appendChild(sq);
+  }
+</script>
+
+</body>
 </html>
