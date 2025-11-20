@@ -68,7 +68,7 @@
     transform: rotateY(180deg) scale(1.05);
   }
 
-  .square:hover::after {
+  .square.hover-add::after {
     content: "+";
     position: absolute;
     top: 50%;
@@ -132,6 +132,7 @@
     color: #fff;
     cursor: pointer;
     font-size: 15px;
+    margin-top: 8px;
   }
 
   .section {
@@ -165,7 +166,7 @@
 
 <div class="profile-modal" id="profileModal">
   <div class="profile-content">
-    <h2>Create Profile</h2>
+    <h2>Create/Edit Profile</h2>
     <input type="text" placeholder="Your Name" id="pName">
     <input type="file" id="pPic" accept="image/*">
     <textarea placeholder="Short Bio" id="pBio"></textarea>
@@ -194,6 +195,7 @@ const viewModal = document.getElementById('viewModal');
 const viewContent = document.getElementById('viewContent');
 
 let profiles = JSON.parse(localStorage.getItem('profiles') || '[]');
+let editingProfileIndex = null;
 
 function renderGrid(){
   grid.innerHTML = '';
@@ -202,7 +204,6 @@ function renderGrid(){
     sq.className = Math.random() > 0.5 ? 'square' : 'square white';
     sq.dataset.index = i;
 
-    // If profile exists for this index
     const profile = profiles.find(p=>p.index==i);
     if(profile){
       const img = document.createElement('img');
@@ -212,17 +213,25 @@ function renderGrid(){
 
       img.addEventListener('click',(e)=>{
         e.stopPropagation();
-        viewContent.innerHTML = `<h2>${profile.name}</h2><img src='${profile.imgSrc}' style='width:100%;border-radius:8px;'/><p>${profile.bio}</p>`;
+        viewContent.innerHTML = `<h2>${profile.name}</h2><img src='${profile.imgSrc}' style='width:100%;border-radius:8px;'/><p>${profile.bio}</p><button id='editBtn'>Edit</button>`;
         viewModal.style.display = 'flex';
-      });
-    }
 
-    sq.addEventListener('click',()=>{
-      if(!sq.querySelector('img')){
+        document.getElementById('editBtn').addEventListener('click',()=>{
+          editingProfileIndex = i;
+          document.getElementById('pName').value = profile.name;
+          document.getElementById('pBio').value = profile.bio;
+          profileModal.style.display = 'flex';
+          viewModal.style.display = 'none';
+        });
+      });
+    } else {
+      sq.classList.add('hover-add');
+      sq.addEventListener('click',()=>{
         profileModal.style.display = 'flex';
         sq.dataset.currentSquare = true;
-      }
-    });
+        editingProfileIndex = null;
+      });
+    }
 
     grid.appendChild(sq);
   }
@@ -234,24 +243,25 @@ saveBtn.addEventListener('click',()=>{
   const name = document.getElementById('pName').value;
   const pic = document.getElementById('pPic').files[0];
   const bio = document.getElementById('pBio').value;
-  if(!name || !pic) return;
+  if(!name) return;
 
   const reader = new FileReader();
   reader.onload = function(e){
-    const imgSrc = e.target.result;
-    const sq = document.querySelector('.square[data-current-square]');
-    if(sq){
-      profiles.push({
-        name,
-        imgSrc,
-        bio,
-        index: parseInt(sq.dataset.index)
-      });
-      localStorage.setItem('profiles', JSON.stringify(profiles));
-      renderGrid();
+    const imgSrc = pic ? e.target.result : profiles[editingProfileIndex]?.imgSrc;
+    if(editingProfileIndex !== null){
+      // Edit existing profile
+      profiles[editingProfileIndex] = { ...profiles[editingProfileIndex], name, bio, imgSrc };
+    } else {
+      const sq = document.querySelector('.square[data-current-square]');
+      if(sq){
+        profiles.push({ name, bio, imgSrc, index: parseInt(sq.dataset.index) });
+      }
     }
+    localStorage.setItem('profiles', JSON.stringify(profiles));
+    renderGrid();
   };
-  reader.readAsDataURL(pic);
+  if(pic) reader.readAsDataURL(pic);
+  else reader.onload();
 
   profileModal.style.display = 'none';
   document.getElementById('pName').value='';
