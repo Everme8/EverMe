@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Digital Lives</title>
+<title>EverMe</title>
 <style>
 body {
 margin: 0;
@@ -27,73 +27,75 @@ font-size: 14px;
 color: #ccc;
 }
 .container {
-max-width: 800px;
+max-width: 1000px;
 margin: 30px auto;
 padding: 20px;
-background: #fff;
-border-radius: 12px;
-box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
-.profile-form {
+.nav {
 display: flex;
-flex-direction: column;
-gap: 10px;
-margin-bottom: 30px;
+gap: 15px;
+justify-content: center;
+margin-bottom: 20px;
 }
-.profile-form input, .profile-form textarea {
-padding: 10px;
-border-radius: 8px;
-border: 1px solid #ccc;
-font-size: 14px;
-}
-.profile-form button {
-padding: 12px;
+.nav button {
+padding: 10px 20px;
 border: none;
 border-radius: 8px;
 background: #222;
 color: #fff;
 cursor: pointer;
-font-size: 15px;
+transition: 0.2s;
 }
-.profiles-gallery {
+.nav button:hover {
+background: #444;
+}
+.section {
+display: none;
+margin-top: 20px;
+}
+.section.active {
+display: block;
+}
+.profile-grid {
 display: grid;
-grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-gap: 15px;
+grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+gap: 20px;
 }
-.profile-card {
-background: #fafafa;
-border-radius: 12px;
-padding: 10px;
-text-align: center;
-border: 1px solid #eee;
-cursor: pointer;
-}
-.profile-card img {
+.profile-square {
 width: 100%;
-height: 120px;
-object-fit: cover;
+padding-bottom: 100%;
+background: #000;
 border-radius: 8px;
+position: relative;
+cursor: pointer;
+transition: 0.3s;
 }
-.about-section {
-margin-top: 40px;
-padding-top: 20px;
-border-top: 1px solid #ddd;
+.profile-square::after {
+content: '+';
+color: white;
+font-size: 36px;
+position: absolute;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
+display: none;
 }
-</style>
-</head>
-<body>
-<header>
-<h1>Digital Lives</h1>
-<p>Every life matters — leave your digital trace</p>
-</header>
-<div class="container">
-<form class="profile-form" id="profileForm">
-<input type="text" id="username" placeholder="Your name" required>
-<input type="file" id="avatar" accept="image/*">
-<textarea id="bio" maxlength="200" placeholder="A short bio about yourself"></textarea>
-<button type="submit">Create Profile</button>
-</form>
-<div class="profiles-gallery" id="gallery"></div>
-
-
+.profile-square.flipped {
+background: #fff;
+}
+.profile-square.flipped::after {
+display: block;
+}
+.profile-detail {
+text-align: center;
+margin-top: 20px;
+}
+.profile-detail img {
+width: 150px;
+border-radius: 12px;
+}
+.about, .contact {
+background: #fff;
+padding: 20px;
+border-radius: 12px;
 </html>
