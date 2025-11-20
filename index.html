@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>EverMe — Digital Lives</title>
-
 <style>
   body {
     margin: 0;
@@ -33,29 +32,34 @@
     color: #ccc;
   }
 
-  /* MAIN GRID OF BLACK SQUARES */
+  /* MAIN GRID OF SQUARES */
   .grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
     gap: 12px;
     padding: 20px;
+    transform: scale(0.6);
+    transform-origin: center top;
+    transition: transform 0.5s;
   }
 
   .square {
     width: 100%;
     padding-bottom: 100%;
-    background: #000;
+    background: #fff;
+    border: 2px solid #000;
+    border-radius: 8px;
     position: relative;
     cursor: pointer;
     transition: 0.3s;
   }
 
-  .square.active {
+  .square:hover {
     background: #fff;
-    border: 2px solid #000;
+    border: 3px solid #000;
   }
 
-  .square.active::after {
+  .square:hover::after {
     content: "+";
     position: absolute;
     top: 50%;
@@ -64,6 +68,47 @@
     font-size: 42px;
     color: #000;
     font-weight: bold;
+  }
+
+  /* PROFILE MODAL */
+  .profile-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+
+  .profile-content {
+    background: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    width: 400px;
+    max-width: 90%;
+    text-align: center;
+  }
+
+  .profile-content input, .profile-content textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+  }
+
+  .profile-content button {
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    background: #000;
+    color: #fff;
+    cursor: pointer;
+    font-size: 15px;
   }
 
   /* ABOUT SECTION */
@@ -89,7 +134,6 @@
 </head>
 
 <body>
-
 <header>
   <h1>EverMe</h1>
   <p>Digital Lives — Every Life Matters</p>
@@ -97,6 +141,17 @@
 
 <!-- GRID OF SQUARES -->
 <div class="grid" id="grid"></div>
+
+<!-- PROFILE MODAL -->
+<div class="profile-modal" id="profileModal">
+  <div class="profile-content">
+    <h2>Create Profile</h2>
+    <input type="text" placeholder="Your Name" id="pName">
+    <input type="file" id="pPic" accept="image/*">
+    <textarea placeholder="Short Bio" id="pBio"></textarea>
+    <button id="saveProfile">Save Profile</button>
+  </div>
+</div>
 
 <!-- ABOUT -->
 <div class="section" id="about">
@@ -121,21 +176,33 @@
 </footer>
 
 <script>
-  // Create a large number of squares
-  const grid = document.getElementById("grid");
+const grid = document.getElementById('grid');
+const modal = document.getElementById('profileModal');
+const saveBtn = document.getElementById('saveProfile');
 
-  for (let i = 0; i < 120; i++) {
-    const sq = document.createElement("div");
-    sq.className = "square";
+for(let i=0; i<120; i++){
+  const sq = document.createElement('div');
+  sq.className = 'square';
 
-    sq.addEventListener("click", () => {
-      sq.classList.toggle("active");
-      // later we can open a profile creation modal here
-    });
+  // flip on hover handled by CSS
 
-    grid.appendChild(sq);
-  }
+  sq.addEventListener('click', () => {
+    modal.style.display = 'flex';
+  });
+
+  grid.appendChild(sq);
+}
+
+saveBtn.addEventListener('click', () => {
+  // placeholder: here we can handle image/bio upload later
+  alert('Profile saved (placeholder)');
+  modal.style.display = 'none';
+});
+
+// optional: close modal when clicking outside content
+modal.addEventListener('click', (e) => {
+  if(e.target === modal){ modal.style.display = 'none'; }
+});
 </script>
-
 </body>
 </html>
