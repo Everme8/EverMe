@@ -32,11 +32,10 @@
     color: #ccc;
   }
 
-  /* MAIN GRID OF SQUARES */
   .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
-    gap: 6px;
+    grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+    gap: 4px;
     padding: 10px;
     transform: scale(0.7);
     transform-origin: center top;
@@ -58,6 +57,16 @@
     border: 2px solid #000;
   }
 
+  .square img.profile-pic {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 4px;
+  }
+
   .square:hover {
     transform: rotateY(180deg) scale(1.05);
   }
@@ -69,11 +78,10 @@
     left: 50%;
     transform: translate(-50%, -50%);
     font-size: 28px;
-    color: #000;
+    color: #fff;
     font-weight: bold;
   }
 
-  /* ABOUT TEXT IN GRID */
   .about-inline {
     grid-column: 1 / -1;
     padding: 20px;
@@ -85,9 +93,10 @@
     margin: 20px 0;
     max-width: 600px;
     justify-self: center;
+    z-index: 10;
+    position: relative;
   }
 
-  /* PROFILE MODAL */
   .profile-modal {
     display: none;
     position: fixed;
@@ -128,7 +137,6 @@
     font-size: 15px;
   }
 
-  /* CONTACT */
   .section {
     padding: 60px 20px;
     max-width: 800px;
@@ -156,11 +164,9 @@
   <p>Digital Lives — Every Life Matters</p>
 </header>
 
-<!-- GRID OF SQUARES -->
 <div class="grid" id="grid"></div>
 <div class="about-inline">EverMe is a digital space designed to preserve human presence beyond time. A minimalist world where every person can leave a trace: a face, a memory, a thought. No social noise. No endless scrolling. No addictive algorithms. Just pure existence — recorded forever.</div>
 
-<!-- PROFILE MODAL -->
 <div class="profile-modal" id="profileModal">
   <div class="profile-content">
     <h2>Create Profile</h2>
@@ -171,7 +177,6 @@
   </div>
 </div>
 
-<!-- CONTACT -->
 <div class="section" id="contact">
   <h2>Contact Us</h2>
   <p>Email: support@everme.com</p>
@@ -187,24 +192,65 @@ const grid = document.getElementById('grid');
 const modal = document.getElementById('profileModal');
 const saveBtn = document.getElementById('saveProfile');
 
-for(let i=0; i<400; i++){
+// Store profiles
+let profiles = [];
+
+for(let i=0; i<800; i++){
   const sq = document.createElement('div');
   sq.className = Math.random() > 0.5 ? 'square' : 'square white';
 
   sq.addEventListener('click', () => {
     modal.style.display = 'flex';
+    sq.dataset.currentSquare = true;
   });
 
   grid.appendChild(sq);
 }
 
 saveBtn.addEventListener('click', () => {
-  alert('Profile saved (placeholder)');
+  const name = document.getElementById('pName').value;
+  const pic = document.getElementById('pPic').files[0];
+  const bio = document.getElementById('pBio').value;
+
+  if(!name) return;
+
+  const reader = new FileReader();
+  reader.onload = function(e){
+    const imgSrc = e.target.result;
+
+    // Find first square with currentSquare=true
+    const sq = document.querySelector('.square[data-current-square]');
+    if(sq){
+      const img = document.createElement('img');
+      img.src = imgSrc;
+      img.className = 'profile-pic';
+      sq.appendChild(img);
+      sq.removeAttribute('data-current-square');
+
+      // Store profile
+      profiles.push({name, imgSrc, bio, square: sq});
+
+      // Click on image navigates to profile page (placeholder alert)
+      img.addEventListener('click', (e)=>{
+        e.stopPropagation();
+        alert(`Go to profile of ${name} (placeholder)`);
+      });
+    }
+  };
+
+  if(pic) reader.readAsDataURL(pic);
+
   modal.style.display = 'none';
+  document.getElementById('pName').value = '';
+  document.getElementById('pPic').value = '';
+  document.getElementById('pBio').value = '';
 });
 
 modal.addEventListener('click', (e) => {
-  if(e.target === modal){ modal.style.display = 'none'; }
+  if(e.target === modal){ modal.style.display = 'none';
+    const sq = document.querySelector('.square[data-current-square]');
+    if(sq) sq.removeAttribute('data-current-square');
+  }
 });
 </script>
 </body>
