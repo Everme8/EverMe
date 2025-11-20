@@ -35,10 +35,10 @@
   /* MAIN GRID OF SQUARES */
   .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-    gap: 12px;
-    padding: 20px;
-    transform: scale(0.6);
+    grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+    gap: 6px;
+    padding: 10px;
+    transform: scale(0.7);
     transform-origin: center top;
     transition: transform 0.5s;
   }
@@ -46,17 +46,20 @@
   .square {
     width: 100%;
     padding-bottom: 100%;
-    background: #fff;
-    border: 2px solid #000;
-    border-radius: 8px;
+    background: #000;
+    border-radius: 4px;
     position: relative;
     cursor: pointer;
-    transition: 0.3s;
+    transition: transform 0.3s ease-in-out, background 0.3s;
+  }
+
+  .square.white {
+    background: #fff;
+    border: 2px solid #000;
   }
 
   .square:hover {
-    background: #fff;
-    border: 3px solid #000;
+    transform: rotateY(180deg) scale(1.05);
   }
 
   .square:hover::after {
@@ -65,9 +68,23 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    font-size: 42px;
+    font-size: 28px;
     color: #000;
     font-weight: bold;
+  }
+
+  /* ABOUT TEXT IN GRID */
+  .about-inline {
+    grid-column: 1 / -1;
+    padding: 20px;
+    text-align: center;
+    font-size: 16px;
+    color: #000;
+    background: rgba(255,255,255,0.9);
+    border-radius: 12px;
+    margin: 20px 0;
+    max-width: 600px;
+    justify-self: center;
   }
 
   /* PROFILE MODAL */
@@ -111,9 +128,9 @@
     font-size: 15px;
   }
 
-  /* ABOUT SECTION */
+  /* CONTACT */
   .section {
-    padding: 40px 20px;
+    padding: 60px 20px;
     max-width: 800px;
     margin: auto;
   }
@@ -141,6 +158,7 @@
 
 <!-- GRID OF SQUARES -->
 <div class="grid" id="grid"></div>
+<div class="about-inline">EverMe is a digital space designed to preserve human presence beyond time. A minimalist world where every person can leave a trace: a face, a memory, a thought. No social noise. No endless scrolling. No addictive algorithms. Just pure existence — recorded forever.</div>
 
 <!-- PROFILE MODAL -->
 <div class="profile-modal" id="profileModal">
@@ -151,17 +169,6 @@
     <textarea placeholder="Short Bio" id="pBio"></textarea>
     <button id="saveProfile">Save Profile</button>
   </div>
-</div>
-
-<!-- ABOUT -->
-<div class="section" id="about">
-  <h2>About EverMe</h2>
-  <p>
-    EverMe is a digital space designed to preserve human presence beyond time.
-    A minimalist world where every person can leave a trace: a face, a memory, a thought.
-    No social noise. No endless scrolling. No addictive algorithms.
-    Just pure existence — recorded forever.
-  </p>
 </div>
 
 <!-- CONTACT -->
@@ -180,11 +187,9 @@ const grid = document.getElementById('grid');
 const modal = document.getElementById('profileModal');
 const saveBtn = document.getElementById('saveProfile');
 
-for(let i=0; i<120; i++){
+for(let i=0; i<400; i++){
   const sq = document.createElement('div');
-  sq.className = 'square';
-
-  // flip on hover handled by CSS
+  sq.className = Math.random() > 0.5 ? 'square' : 'square white';
 
   sq.addEventListener('click', () => {
     modal.style.display = 'flex';
@@ -194,12 +199,10 @@ for(let i=0; i<120; i++){
 }
 
 saveBtn.addEventListener('click', () => {
-  // placeholder: here we can handle image/bio upload later
   alert('Profile saved (placeholder)');
   modal.style.display = 'none';
 });
 
-// optional: close modal when clicking outside content
 modal.addEventListener('click', (e) => {
   if(e.target === modal){ modal.style.display = 'none'; }
 });
