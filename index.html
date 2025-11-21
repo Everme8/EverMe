@@ -1,253 +1,168 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>BooDee</title>
-
 <style>
-    body {
-        margin: 0;
-        font-family: Arial, sans-serif;
-        background: linear-gradient(135deg, #e7eff7, #eef1f5);
-        color: white;
-        overflow-x: hidden;
-        text-align: center;
-    }
+  :root{
+    --bg-a:#eaf6ff; /* light blue */
+    --bg-b:#e6edf2; /* pale gray-blue */
+    --header-bg:#d9dfe4; /* grayish header */
+    --square-blue:#cfe6f8; /* pale blue squares */
+    --square-gray:#d6d6d6; /* pale gray squares */
+    --accent:#ffffff; /* white text */
+    --card-border: rgba(10,20,30,0.06);
+  }
+  html,body{height:100%;margin:0;font-family:Inter,Arial,Helvetica,sans-serif;background:linear-gradient(180deg,var(--bg-a),var(--bg-b));color:#04304a}
 
-    h1 {
-        margin-top: 25px;
-        font-size: 48px;
-        letter-spacing: 2px;
-        color: #ffffff;
-    }
+  header{background:var(--header-bg);padding:28px 12px;text-align:center}
+  header h1{margin:0;font-size:56px;color:var(--accent);letter-spacing:1px;font-weight:700}
+  header p{margin:6px 0 0;color:var(--accent);font-size:14px}
 
-    h2 {
-        margin-top: -10px;
-        font-size: 20px;
-        font-weight: 300;
-        opacity: 0.95;
-    }
+  /* grid filling full width */
+  .grid{display:grid;grid-template-columns: repeat(auto-fill, minmax(46px, 1fr));gap:6px;padding:8px;position:relative}
 
-    /* Grid */
-    .grid {
-        margin-top: 40px;
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-        gap: 18px;
-        padding: 20px;
-    }
+  /* about box sits above grid center */
+  .about-inline{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(720px,88%);background:rgba(255,255,255,0.08);padding:18px;border-radius:10px;box-shadow:0 6px 18px rgba(20,30,40,0.06);text-align:center;z-index:5}
+  .about-inline h2{margin:0 0 6px;font-size:20px;color:var(--accent)}
+  .about-inline p{margin:0;color:var(--accent);opacity:0.95}
 
-    /* Cards */
-    .card {
-        width: 100%;
-        padding-top: 100%;
-        position: relative;
-        perspective: 1000px;
-    }
+  /* square styling */
+  .square{width:100%;padding-bottom:100%;position:relative;perspective:900px;border-radius:6px;overflow:visible}
+  .inner{position:absolute;inset:0;transition:transform .45s cubic-bezier(.2,.9,.3,1);transform-style:preserve-3d;border-radius:6px}
+  .square:hover .inner{transform:rotateY(180deg)}
+  .face{position:absolute;inset:0;border-radius:6px;backface-visibility:hidden;display:flex;align-items:center;justify-content:center;overflow:hidden}
 
-    .inner {
-        position: absolute;
-        inset: 0;
-        transition: transform 0.6s ease;
-        transform-style: preserve-3d;
-        cursor: pointer;
-    }
+  .front{background:var(--square-blue);border:2px solid var(--card-border)}
+  .front.gray{background:var(--square-gray);}
+  .front img{width:100%;height:100%;object-fit:cover;display:block}
 
-    .card:hover .inner {
-        transform: rotateY(180deg);
-    }
+  .back{transform:rotateY(180deg);background:rgba(255,255,255,0.06);border:2px dashed rgba(255,255,255,0.18);color:var(--accent);font-size:22px;font-weight:700;display:flex;align-items:center;justify-content:center}
+  .with-profile .back{display:none}
 
-    /* Front */
-    .front, .back {
-        position: absolute;
-        inset: 0;
-        border-radius: 10px;
-        backface-visibility: hidden;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 22px;
-    }
+  /* modal */
+  .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:60}
+  .modal{width:360px;max-width:92%;background:white;color:#062033;border-radius:12px;padding:16px 18px;box-shadow:0 20px 50px rgba(10,20,30,.2);text-align:left}
+  .modal h3{margin:6px 0 4px}
+  .modal img{width:100%;height:220px;object-fit:cover;border-radius:8px;background:#eee}
+  .modal label{display:block;margin-top:10px;font-size:13px;color:#27445b}
+  .modal input[type="text"], .modal textarea{width:100%;padding:8px;margin-top:6px;border-radius:8px;border:1px solid #d6e0ea;font-size:14px}
+  .modal textarea{min-height:70px;resize:vertical}
+  .row{display:flex;gap:8px;margin-top:12px}
+  .btn{display:inline-block;padding:10px 12px;border-radius:8px;border:none;background:#0b3b66;color:white;cursor:pointer;font-weight:600}
+  .btn.secondary{background:#9fb1d9;color:#062033}
+  .small{font-size:13px;color:#27445b;margin-top:6px}
 
-    .front {
-        background: rgba(180, 195, 210, 0.45);
-        border: 3px solid rgba(120, 140, 160, 0.55);
-    }
+  /* footer area with write to */
+  .footerLinks{margin:36px 0 60px;text-align:center;color:#04304a}
+  .footerLinks a{color:#062033;text-decoration:none;font-weight:600}
 
-    /* Back */
-    .back {
-        background: rgba(255,255,255,0.1);
-        border: 3px dashed rgba(255,255,255,0.4);
-        transform: rotateY(180deg);
-        color: white;
-        font-size: 40px;
-    }
-
-    /* Profile Modal */
-    .modalBG {
-        position: fixed;
-        inset: 0;
-        background: rgba(0,0,0,0.65);
-        display: none;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .modal {
-        background: #fff;
-        color: black;
-        width: 320px;
-        padding: 20px;
-        border-radius: 12px;
-        text-align: left;
-    }
-
-    .modal img {
-        width: 100%;
-        border-radius: 10px;
-        margin-bottom: 12px;
-    }
-
-    button {
-        width: 100%;
-        padding: 12px;
-        border: none;
-        margin-top: 12px;
-        background: #6b8cff;
-        color: white;
-        border-radius: 8px;
-        font-size: 16px;
-    }
-
-    /* About + Contact */
-    .footerLinks {
-        margin-top: 40px;
-        font-size: 18px;
-        opacity: 0.9;
-    }
+  @media(max-width:600px){header h1{font-size:36px}}
 </style>
-
 </head>
 <body>
-
-<h1>BooDee</h1>
-<h2>Every Life Matters</h2>
+<header>
+  <h1>BooDee</h1>
+  <p>Digital Lives — Every Life Matters</p>
+</header>
 
 <div class="grid" id="grid"></div>
 
-<div class="footerLinks">
-    <p>About BooDee • Write to BooDee</p>
+<div class="about-inline" id="aboutBox">
+  <h2>About BooDee</h2>
+  <p style="color:var(--accent)">A minimalist space to leave a human trace — photo, name, birth year and a short bio. Squares around this text form the world; click an empty square to add your profile.</p>
 </div>
 
-<!-- Modal -->
-<div class="modalBG" id="modalBG">
-    <div class="modal" id="modalContent">
-        <img id="modalImg">
-        <h3 id="modalName"></h3>
-        <p id="modalYear"></p>
-        <p id="modalBio"></p>
-        <button onclick="editProfile()">Edit Profile</button>
-        <button onclick="closeModal()">Close</button>
+<!-- Profile modal (add / edit) -->
+<div class="modal-bg" id="modalBg">
+  <div class="modal" id="modal">
+    <h3 id="modalTitle">Create Profile</h3>
+
+    <label>Name</label>
+    <input id="fName" type="text" />
+
+    <label>Birth Year</label>
+    <input id="fYear" type="text" />
+
+    <label>Short Bio</label>
+    <textarea id="fBio"></textarea>
+
+    <label style="margin-top:8px">Photo (choose file)</label>
+    <input id="fPic" type="file" accept="image/*" />
+
+    <div class="row">
+      <button class="btn" id="saveBtn">Save</button>
+      <button class="btn secondary" id="cancelBtn">Cancel</button>
     </div>
+    <div class="small">Profiles are stored locally in your browser for this prototype.</div>
+  </div>
+</div>
+
+<!-- View modal -->
+<div class="modal-bg" id="viewBg">
+  <div class="modal" id="viewModal">
+    <img id="vImg" alt="profile pic" />
+    <h3 id="vName"></h3>
+    <div class="small" id="vYear"></div>
+    <p id="vBio"></p>
+    <div style="display:flex;gap:8px;margin-top:12px">
+      <button class="btn" id="editBtn">Edit</button>
+      <button class="btn secondary" id="closeView">Close</button>
+    </div>
+  </div>
+</div>
+
+<div class="footerLinks">
+  <p><strong>Write to BooDee</strong> — Email: support@everme.com</p>
+  <p>For partnerships, ideas, or collaboration, feel free to reach out.</p>
 </div>
 
 <script>
-const grid = document.getElementById("grid");
-let profiles = JSON.parse(localStorage.getItem("profiles") || "[]");
+let profiles = JSON.parse(localStorage.getItem('everme_profiles') || '{}');
+const grid = document.getElementById('grid');
+const modalBg = document.getElementById('modalBg');
+const viewBg = document.getElementById('viewBg');
+let currentIndex = null; let editing=false;
 
-function renderGrid() {
-    grid.innerHTML = "";
+function renderGrid(){
+  grid.innerHTML='';
+  const total=1200;
+  for(let i=0;i<total;i++){
+    const sq=document.createElement('div'); sq.className='square'; sq.dataset.index=i;
+    const inner=document.createElement('div'); inner.className='inner';
+    const front=document.createElement('div'); front.className='face front';
+    // randomly blue or gray front if empty
+    if(!profiles[i]) front.classList.add(Math.random()>0.5? '':'gray');
+    const back=document.createElement('div'); back.className='face back'; back.textContent='+';
 
-    // Fill page with many squares
-    let totalSquares = 40;  
-    for (let i = 0; i < totalSquares; i++) {
-        let card = document.createElement("div");
-        card.className = "card";
-
-        let inner = document.createElement("div");
-        inner.className = "inner";
-
-        let front = document.createElement("div");
-        front.className = "front";
-
-        let back = document.createElement("div");
-        back.className = "back";
-        back.textContent = "+";
-
-        // Profile box or empty add box
-        if (profiles[i]) {
-            let img = document.createElement("img");
-            img.src = profiles[i].img;
-            img.style.width = "100%";
-            img.style.height = "100%";
-            img.style.objectFit = "cover";
-            img.style.borderRadius = "10px";
-            front.appendChild(img);
-
-            // click opens modal
-            card.onclick = () => openProfile(i);
-        } else {
-            // Flip shows +
-            card.onclick = () => createProfile(i);
-        }
-
-        inner.appendChild(front);
-        inner.appendChild(back);
-        card.appendChild(inner);
-        grid.appendChild(card);
+    if(profiles[i]){
+      sq.classList.add('with-profile');
+      const img=document.createElement('img'); img.src=profiles[i].img; front.appendChild(img);
+      sq.addEventListener('click',()=>openView(i));
+    } else {
+      sq.addEventListener('click',()=>openAdd(i));
     }
+
+    inner.appendChild(front); inner.appendChild(back); sq.appendChild(inner); grid.appendChild(sq);
+  }
 }
 
-function createProfile(index) {
-    let name = prompt("Name:");
-    if (!name) return;
+function openAdd(index){currentIndex=index;editing=false;document.getElementById('modalTitle').innerText='Create Profile';document.getElementById('fName').value='';document.getElementById('fYear').value='';document.getElementById('fBio').value='';document.getElementById('fPic').value='';modalBg.style.display='flex'}
 
-    let year = prompt("Birth Year:");
-    if (!year) return;
+function openView(index){const p=profiles[index];currentIndex=index;document.getElementById('vImg').src=p.img;document.getElementById('vName').innerText=p.name;document.getElementById('vYear').innerText=p.year?p.year:'';document.getElementById('vBio').innerText=p.bio||'';viewBg.style.display='flex'}
 
-    let bio = prompt("Bio:");
-    if (!bio) return;
+document.getElementById('editBtn').addEventListener('click',()=>{const p=profiles[currentIndex];editing=true;document.getElementById('modalTitle').innerText='Edit Profile';document.getElementById('fName').value=p.name||'';document.getElementById('fYear').value=p.year||'';document.getElementById('fBio').value=p.bio||'';document.getElementById('fPic').value='';viewBg.style.display='none';modalBg.style.display='flex'});
 
-    let imgURL = prompt("Image URL:");
-    if (!imgURL) return;
+document.getElementById('saveBtn').addEventListener('click',()=>{const name=document.getElementById('fName').value.trim();const year=document.getElementById('fYear').value.trim();const bio=document.getElementById('fBio').value.trim();const file=document.getElementById('fPic').files[0];if(!name){alert('Please enter name');return;}function write(imgData){profiles[currentIndex]={name,year,bio,img:imgData};localStorage.setItem('everme_profiles',JSON.stringify(profiles));modalBg.style.display='none';renderGrid()}if(file){const reader=new FileReader();reader.onload=function(e){write(e.target.result)};reader.readAsDataURL(file)}else{if(editing && profiles[currentIndex] && profiles[currentIndex].img){write(profiles[currentIndex].img)}else{alert('Please choose a photo to upload (required for this prototype).')}}});
 
-    profiles[index] = { name, year, bio, img: imgURL };
-    localStorage.setItem("profiles", JSON.stringify(profiles));
-    renderGrid();
-}
+document.getElementById('cancelBtn').addEventListener('click',()=>{modalBg.style.display='none'});
 
-function openProfile(index) {
-    let p = profiles[index];
-
-    document.getElementById("modalImg").src = p.img;
-    document.getElementById("modalName").innerText = p.name;
-    document.getElementById("modalYear").innerText = p.year;
-    document.getElementById("modalBio").innerText = p.bio;
-
-    document.getElementById("modalBG").style.display = "flex";
-    window.currentIndex = index;
-}
-
-function closeModal() {
-    document.getElementById("modalBG").style.display = "none";
-}
-
-function editProfile() {
-    let p = profiles[window.currentIndex];
-
-    p.name = prompt("Name:", p.name);
-    p.year = prompt("Birth Year:", p.year);
-    p.bio = prompt("Bio:", p.bio);
-    p.img = prompt("Image URL:", p.img);
-
-    localStorage.setItem("profiles", JSON.stringify(profiles));
-    closeModal();
-    renderGrid();
-}
+document.getElementById('closeView').addEventListener('click',()=>{viewBg.style.display='none'});
+modalBg.addEventListener('click',(e)=>{if(e.target===modalBg)modalBg.style.display='none'});
+viewBg.addEventListener('click',(e)=>{if(e.target===viewBg)viewBg.style.display='none'});
 
 renderGrid();
 </script>
-
 </body>
 </html>
