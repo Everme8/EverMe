@@ -1,285 +1,253 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EverMe — Digital Lives</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>BooDee</title>
+
 <style>
-  body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: #ffffff;
-    color: #111;
-    overflow-x: hidden;
-  }
-
-  header {
-    text-align: center;
-    padding: 40px 10px;
-    background: #000;
-    color: #fff;
-  }
-
-  header h1 {
-    margin: 0;
-    font-size: 42px;
-    font-weight: bold;
-  }
-
-  header p {
-    margin-top: 10px;
-    font-size: 16px;
-    color: #ccc;
-  }
-
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
-    gap: 3px;
-    padding: 5px;
-  }
-
-  .square {
-    width: 100%;
-    padding-bottom: 100%;
-    background: #000;
-    border-radius: 4px;
-    position: relative;
-    cursor: pointer;
-    transition: transform 0.3s ease-in-out, background 0.3s;
-  }
-
-  .square.white {
-    background: #fff;
-    border: 2px solid #000;
-  }
-
-  .square img.profile-pic {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 4px;
-  }
-
-  .square:hover {
-    transform: rotateY(180deg) scale(1.05);
-  }
-
-  .square.hover-add::after {
-    content: "+";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 28px;
-    color: #fff;
-    font-weight: bold;
-  }
-
-  .about-inline {
-    grid-column: 1 / -1;
-    padding: 20px;
-    text-align: center;
-    font-size: 16px;
-    color: #000;
-    background: rgba(255,255,255,0.9);
-    border-radius: 12px;
-    margin: 20px 0;
-    max-width: 600px;
-    justify-self: center;
-    position: relative;
-    z-index: 10;
-  }
-
-  .profile-modal, .view-modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.7);
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-  }
-
-  .profile-content, .view-content {
-    background: #fff;
-    padding: 30px;
-    border-radius: 12px;
-    width: 400px;
-    max-width: 90%;
-    text-align: center;
-  }
-
-  .profile-content input, .profile-content textarea {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 12px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-  }
-
-  .profile-content button {
-    padding: 12px;
-    border: none;
-    border-radius: 8px;
-    background: #000;
-    color: #fff;
-    cursor: pointer;
-    font-size: 15px;
-    margin-top: 8px;
-  }
-
-  .section {
-    padding: 60px 20px;
-    max-width: 800px;
-    margin: auto;
-  }
-
-  h2 {
-    margin-top: 0;
-    font-size: 28px;
-  }
-
-  footer {
-    padding: 20px;
-    background: #000;
-    color: #fff;
-    text-align: center;
-    margin-top: 40px;
-  }
-</style>
-</head>
-<body>
-<header>
-  <h1>EverMe</h1>
-  <p>Digital Lives — Every Life Matters</p>
-</header>
-
-<div class="grid" id="grid"></div>
-<div class="about-inline">EverMe is a digital space designed to preserve human presence beyond time. A minimalist world where every person can leave a trace: a face, a memory, a thought. No social noise. No endless scrolling. No addictive algorithms. Just pure existence — recorded forever.</div>
-
-<div class="profile-modal" id="profileModal">
-  <div class="profile-content">
-    <h2>Create/Edit Profile</h2>
-    <input type="text" placeholder="Your Name" id="pName">
-    <input type="file" id="pPic" accept="image/*">
-    <textarea placeholder="Short Bio" id="pBio"></textarea>
-    <button id="saveProfile">Save Profile</button>
-  </div>
-</div>
-
-<div class="view-modal" id="viewModal">
-  <div class="view-content" id="viewContent"></div>
-</div>
-
-<div class="section" id="contact">
-  <h2>Contact Us</h2>
-  <p>Email: support@everme.com</p>
-  <p>For partnerships, ideas, or collaboration, feel free to reach out.</p>
-</div>
-<footer>
-  © 2025 EverMe — All rights reserved.
-</footer>
-
-<script>
-const grid = document.getElementById('grid');
-const profileModal = document.getElementById('profileModal');
-const saveBtn = document.getElementById('saveProfile');
-const viewModal = document.getElementById('viewModal');
-const viewContent = document.getElementById('viewContent');
-
-let profiles = JSON.parse(localStorage.getItem('profiles') || '[]');
-let editingProfileIndex = null;
-
-function renderGrid(){
-  grid.innerHTML = '';
-  for(let i=0; i<1200; i++){
-    const sq = document.createElement('div');
-    sq.className = Math.random() > 0.5 ? 'square' : 'square white';
-    sq.dataset.index = i;
-
-    const profile = profiles.find(p=>p.index==i);
-    if(profile){
-      const img = document.createElement('img');
-      img.src = profile.imgSrc;
-      img.className = 'profile-pic';
-      sq.appendChild(img);
-
-      img.addEventListener('click',(e)=>{
-        e.stopPropagation();
-        viewContent.innerHTML = `<h2>${profile.name}</h2><img src='${profile.imgSrc}' style='width:100%;border-radius:8px;'/><p>${profile.bio}</p><button id='editBtn'>Edit</button>`;
-        viewModal.style.display = 'flex';
-
-        document.getElementById('editBtn').addEventListener('click',()=>{
-          editingProfileIndex = i;
-          document.getElementById('pName').value = profile.name;
-          document.getElementById('pBio').value = profile.bio;
-          profileModal.style.display = 'flex';
-          viewModal.style.display = 'none';
-        });
-      });
-    } else {
-      sq.classList.add('hover-add');
-      sq.addEventListener('click',()=>{
-        profileModal.style.display = 'flex';
-        sq.dataset.currentSquare = true;
-        editingProfileIndex = null;
-      });
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: linear-gradient(135deg, #e7eff7, #eef1f5);
+        color: white;
+        overflow-x: hidden;
+        text-align: center;
     }
 
-    grid.appendChild(sq);
-  }
+    h1 {
+        margin-top: 25px;
+        font-size: 48px;
+        letter-spacing: 2px;
+        color: #ffffff;
+    }
+
+    h2 {
+        margin-top: -10px;
+        font-size: 20px;
+        font-weight: 300;
+        opacity: 0.95;
+    }
+
+    /* Grid */
+    .grid {
+        margin-top: 40px;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 18px;
+        padding: 20px;
+    }
+
+    /* Cards */
+    .card {
+        width: 100%;
+        padding-top: 100%;
+        position: relative;
+        perspective: 1000px;
+    }
+
+    .inner {
+        position: absolute;
+        inset: 0;
+        transition: transform 0.6s ease;
+        transform-style: preserve-3d;
+        cursor: pointer;
+    }
+
+    .card:hover .inner {
+        transform: rotateY(180deg);
+    }
+
+    /* Front */
+    .front, .back {
+        position: absolute;
+        inset: 0;
+        border-radius: 10px;
+        backface-visibility: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+    }
+
+    .front {
+        background: rgba(180, 195, 210, 0.45);
+        border: 3px solid rgba(120, 140, 160, 0.55);
+    }
+
+    /* Back */
+    .back {
+        background: rgba(255,255,255,0.1);
+        border: 3px dashed rgba(255,255,255,0.4);
+        transform: rotateY(180deg);
+        color: white;
+        font-size: 40px;
+    }
+
+    /* Profile Modal */
+    .modalBG {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.65);
+        display: none;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .modal {
+        background: #fff;
+        color: black;
+        width: 320px;
+        padding: 20px;
+        border-radius: 12px;
+        text-align: left;
+    }
+
+    .modal img {
+        width: 100%;
+        border-radius: 10px;
+        margin-bottom: 12px;
+    }
+
+    button {
+        width: 100%;
+        padding: 12px;
+        border: none;
+        margin-top: 12px;
+        background: #6b8cff;
+        color: white;
+        border-radius: 8px;
+        font-size: 16px;
+    }
+
+    /* About + Contact */
+    .footerLinks {
+        margin-top: 40px;
+        font-size: 18px;
+        opacity: 0.9;
+    }
+</style>
+
+</head>
+<body>
+
+<h1>BooDee</h1>
+<h2>Every Life Matters</h2>
+
+<div class="grid" id="grid"></div>
+
+<div class="footerLinks">
+    <p>About BooDee • Write to BooDee</p>
+</div>
+
+<!-- Modal -->
+<div class="modalBG" id="modalBG">
+    <div class="modal" id="modalContent">
+        <img id="modalImg">
+        <h3 id="modalName"></h3>
+        <p id="modalYear"></p>
+        <p id="modalBio"></p>
+        <button onclick="editProfile()">Edit Profile</button>
+        <button onclick="closeModal()">Close</button>
+    </div>
+</div>
+
+<script>
+const grid = document.getElementById("grid");
+let profiles = JSON.parse(localStorage.getItem("profiles") || "[]");
+
+function renderGrid() {
+    grid.innerHTML = "";
+
+    // Fill page with many squares
+    let totalSquares = 40;  
+    for (let i = 0; i < totalSquares; i++) {
+        let card = document.createElement("div");
+        card.className = "card";
+
+        let inner = document.createElement("div");
+        inner.className = "inner";
+
+        let front = document.createElement("div");
+        front.className = "front";
+
+        let back = document.createElement("div");
+        back.className = "back";
+        back.textContent = "+";
+
+        // Profile box or empty add box
+        if (profiles[i]) {
+            let img = document.createElement("img");
+            img.src = profiles[i].img;
+            img.style.width = "100%";
+            img.style.height = "100%";
+            img.style.objectFit = "cover";
+            img.style.borderRadius = "10px";
+            front.appendChild(img);
+
+            // click opens modal
+            card.onclick = () => openProfile(i);
+        } else {
+            // Flip shows +
+            card.onclick = () => createProfile(i);
+        }
+
+        inner.appendChild(front);
+        inner.appendChild(back);
+        card.appendChild(inner);
+        grid.appendChild(card);
+    }
+}
+
+function createProfile(index) {
+    let name = prompt("Name:");
+    if (!name) return;
+
+    let year = prompt("Birth Year:");
+    if (!year) return;
+
+    let bio = prompt("Bio:");
+    if (!bio) return;
+
+    let imgURL = prompt("Image URL:");
+    if (!imgURL) return;
+
+    profiles[index] = { name, year, bio, img: imgURL };
+    localStorage.setItem("profiles", JSON.stringify(profiles));
+    renderGrid();
+}
+
+function openProfile(index) {
+    let p = profiles[index];
+
+    document.getElementById("modalImg").src = p.img;
+    document.getElementById("modalName").innerText = p.name;
+    document.getElementById("modalYear").innerText = p.year;
+    document.getElementById("modalBio").innerText = p.bio;
+
+    document.getElementById("modalBG").style.display = "flex";
+    window.currentIndex = index;
+}
+
+function closeModal() {
+    document.getElementById("modalBG").style.display = "none";
+}
+
+function editProfile() {
+    let p = profiles[window.currentIndex];
+
+    p.name = prompt("Name:", p.name);
+    p.year = prompt("Birth Year:", p.year);
+    p.bio = prompt("Bio:", p.bio);
+    p.img = prompt("Image URL:", p.img);
+
+    localStorage.setItem("profiles", JSON.stringify(profiles));
+    closeModal();
+    renderGrid();
 }
 
 renderGrid();
-
-saveBtn.addEventListener('click',()=>{
-  const name = document.getElementById('pName').value;
-  const pic = document.getElementById('pPic').files[0];
-  const bio = document.getElementById('pBio').value;
-  if(!name) return;
-
-  const reader = new FileReader();
-  reader.onload = function(e){
-    const imgSrc = pic ? e.target.result : profiles[editingProfileIndex]?.imgSrc;
-    if(editingProfileIndex !== null){
-      // Edit existing profile
-      profiles[editingProfileIndex] = { ...profiles[editingProfileIndex], name, bio, imgSrc };
-    } else {
-      const sq = document.querySelector('.square[data-current-square]');
-      if(sq){
-        profiles.push({ name, bio, imgSrc, index: parseInt(sq.dataset.index) });
-      }
-    }
-    localStorage.setItem('profiles', JSON.stringify(profiles));
-    renderGrid();
-  };
-  if(pic) reader.readAsDataURL(pic);
-  else reader.onload();
-
-  profileModal.style.display = 'none';
-  document.getElementById('pName').value='';
-  document.getElementById('pPic').value='';
-  document.getElementById('pBio').value='';
-});
-
-profileModal.addEventListener('click',(e)=>{
-  if(e.target===profileModal){
-    profileModal.style.display='none';
-    const sq = document.querySelector('.square[data-current-square]');
-    if(sq) sq.removeAttribute('data-current-square');
-  }
-});
-
-viewModal.addEventListener('click',(e)=>{
-  if(e.target===viewModal) viewModal.style.display='none';
-});
 </script>
+
 </body>
 </html>
