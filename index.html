@@ -10,7 +10,7 @@
     --bg-b:#e6edf2;
     --header-bg:#d9dfe4;
     --square-blue:#cfe6f8;
-    --square-gray:#d6d6d6;
+    --square-gray:#d9dfe4; /* changed to match header */
     --accent:#ffffff;
     --card-border: rgba(10,20,30,0.06);
   }
@@ -63,8 +63,7 @@
 <div class="grid" id="grid"></div>
 
 <div class="about-inline" id="aboutBox">
-  <h2>About BooDee</h2>
-  <p>A minimalist space to leave a human trace — photo, name, birth year and a short bio. Squares around this text form the world; click an empty square to add your profile.</p>
+  <p>BooDee is a digital space designed to preserve human presence beyond time. A minimalist world where every person can leave a trace: a face, a memory, a thought. No social noise. No endless scrolling. No addictive algorithms. Just pure existence — recorded forever.</p>
 </div>
 
 <div class="modal-bg" id="modalBg">
@@ -81,6 +80,7 @@
     <div class="row">
       <button class="btn" id="saveBtn">Save</button>
       <button class="btn secondary" id="cancelBtn">Cancel</button>
+      <button class="btn secondary" id="editBtnModal">Edit</button>
     </div>
     <div class="small">Profiles are stored locally in your browser for this prototype.</div>
   </div>
@@ -109,8 +109,7 @@ let profiles = JSON.parse(localStorage.getItem('everme_profiles') || '{}');
 const grid = document.getElementById('grid');
 const modalBg = document.getElementById('modalBg');
 const viewBg = document.getElementById('viewBg');
-let currentIndex = null;
-let editing=false;
+let currentIndex = null; let editing=false;
 
 function renderGrid(){
   grid.innerHTML='';
@@ -121,7 +120,7 @@ function renderGrid(){
     const front=document.createElement('div'); front.className='face front';
 
     if(!profiles[i]){
-      if(Math.random()>0.5){front.style.background="var(--square-blue)";} else {front.style.background="var(--square-gray)";}
+      front.style.background=Math.random()>0.2? 'var(--square-gray)' : 'var(--square-blue)'; // only blue squares can be added
     }
 
     const back=document.createElement('div'); back.className='face back'; back.textContent='+';
@@ -130,7 +129,7 @@ function renderGrid(){
       sq.classList.add('with-profile');
       const img=document.createElement('img'); img.src=profiles[i].img; front.appendChild(img);
       sq.addEventListener('click',()=>openView(i));
-    } else {
+    } else if(front.style.background==='var(--square-blue)'){
       sq.addEventListener('click',()=>openAdd(i));
     }
 
