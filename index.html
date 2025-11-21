@@ -6,12 +6,12 @@
 <title>BooDee</title>
 <style>
   :root{
-    --bg-a:#eaf6ff; /* light blue */
-    --bg-b:#e6edf2; /* pale gray-blue */
-    --header-bg:#d9dfe4; /* grayish header */
-    --square-blue:#cfe6f8; /* pale blue squares */
-    --square-gray:#d6d6d6; /* pale gray squares */
-    --accent:#ffffff; /* white text */
+    --bg-a:#eaf6ff;
+    --bg-b:#e6edf2;
+    --header-bg:#d9dfe4;
+    --square-blue:#cfe6f8;
+    --square-gray:#d6d6d6;
+    --accent:#ffffff;
     --card-border: rgba(10,20,30,0.06);
   }
   html,body{height:100%;margin:0;font-family:Inter,Arial,Helvetica,sans-serif;background:linear-gradient(180deg,var(--bg-a),var(--bg-b));color:#04304a}
@@ -20,28 +20,22 @@
   header h1{margin:0;font-size:56px;color:var(--accent);letter-spacing:1px;font-weight:700}
   header p{margin:6px 0 0;color:var(--accent);font-size:14px}
 
-  /* grid filling full width */
-  .grid{display:grid;grid-template-columns: repeat(auto-fill, minmax(46px, 1fr));gap:6px;padding:8px;position:relative}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(22px,1fr));gap:6px;padding:8px;position:relative}
 
-  /* about box sits above grid center */
-  .about-inline{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(720px,88%);background:rgba(255,255,255,0.08);padding:18px;border-radius:10px;box-shadow:0 6px 18px rgba(20,30,40,0.06);text-align:center;z-index:5}
-  .about-inline h2{margin:0 0 6px;font-size:20px;color:var(--accent)}
-  .about-inline p{margin:0;color:var(--accent);opacity:0.95}
+  .about-inline{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(720px,88%);background:rgba(255,255,255,0.12);padding:18px;border-radius:10px;box-shadow:0 6px 18px rgba(20,30,40,0.06);text-align:center;z-index:5}
+  .about-inline h2,.about-inline p{color:white !important}
 
-  /* square styling */
   .square{width:100%;padding-bottom:100%;position:relative;perspective:900px;border-radius:6px;overflow:visible}
   .inner{position:absolute;inset:0;transition:transform .45s cubic-bezier(.2,.9,.3,1);transform-style:preserve-3d;border-radius:6px}
   .square:hover .inner{transform:rotateY(180deg)}
   .face{position:absolute;inset:0;border-radius:6px;backface-visibility:hidden;display:flex;align-items:center;justify-content:center;overflow:hidden}
 
   .front{background:var(--square-blue);border:2px solid var(--card-border)}
-  .front.gray{background:var(--square-gray);}
   .front img{width:100%;height:100%;object-fit:cover;display:block}
 
   .back{transform:rotateY(180deg);background:rgba(255,255,255,0.06);border:2px dashed rgba(255,255,255,0.18);color:var(--accent);font-size:22px;font-weight:700;display:flex;align-items:center;justify-content:center}
   .with-profile .back{display:none}
 
-  /* modal */
   .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:60}
   .modal{width:360px;max-width:92%;background:white;color:#062033;border-radius:12px;padding:16px 18px;box-shadow:0 20px 50px rgba(10,20,30,.2);text-align:left}
   .modal h3{margin:6px 0 4px}
@@ -54,8 +48,7 @@
   .btn.secondary{background:#9fb1d9;color:#062033}
   .small{font-size:13px;color:#27445b;margin-top:6px}
 
-  /* footer area with write to */
-  .footerLinks{margin:36px 0 60px;text-align:center;color:#04304a}
+  .footerLinks{text-align:center;color:#04304a;margin:36px 0 60px}
   .footerLinks a{color:#062033;text-decoration:none;font-weight:600}
 
   @media(max-width:600px){header h1{font-size:36px}}
@@ -71,26 +64,20 @@
 
 <div class="about-inline" id="aboutBox">
   <h2>About BooDee</h2>
-  <p style="color:var(--accent)">A minimalist space to leave a human trace — photo, name, birth year and a short bio. Squares around this text form the world; click an empty square to add your profile.</p>
+  <p>A minimalist space to leave a human trace — photo, name, birth year and a short bio. Squares around this text form the world; click an empty square to add your profile.</p>
 </div>
 
-<!-- Profile modal (add / edit) -->
 <div class="modal-bg" id="modalBg">
   <div class="modal" id="modal">
     <h3 id="modalTitle">Create Profile</h3>
-
     <label>Name</label>
     <input id="fName" type="text" />
-
     <label>Birth Year</label>
     <input id="fYear" type="text" />
-
     <label>Short Bio</label>
     <textarea id="fBio"></textarea>
-
     <label style="margin-top:8px">Photo (choose file)</label>
     <input id="fPic" type="file" accept="image/*" />
-
     <div class="row">
       <button class="btn" id="saveBtn">Save</button>
       <button class="btn secondary" id="cancelBtn">Cancel</button>
@@ -99,7 +86,6 @@
   </div>
 </div>
 
-<!-- View modal -->
 <div class="modal-bg" id="viewBg">
   <div class="modal" id="viewModal">
     <img id="vImg" alt="profile pic" />
@@ -123,7 +109,8 @@ let profiles = JSON.parse(localStorage.getItem('everme_profiles') || '{}');
 const grid = document.getElementById('grid');
 const modalBg = document.getElementById('modalBg');
 const viewBg = document.getElementById('viewBg');
-let currentIndex = null; let editing=false;
+let currentIndex = null;
+let editing=false;
 
 function renderGrid(){
   grid.innerHTML='';
@@ -132,8 +119,11 @@ function renderGrid(){
     const sq=document.createElement('div'); sq.className='square'; sq.dataset.index=i;
     const inner=document.createElement('div'); inner.className='inner';
     const front=document.createElement('div'); front.className='face front';
-    // randomly blue or gray front if empty
-    if(!profiles[i]) front.classList.add(Math.random()>0.5? '':'gray');
+
+    if(!profiles[i]){
+      if(Math.random()>0.5){front.style.background="var(--square-blue)";} else {front.style.background="var(--square-gray)";}
+    }
+
     const back=document.createElement('div'); back.className='face back'; back.textContent='+';
 
     if(profiles[i]){
@@ -144,7 +134,10 @@ function renderGrid(){
       sq.addEventListener('click',()=>openAdd(i));
     }
 
-    inner.appendChild(front); inner.appendChild(back); sq.appendChild(inner); grid.appendChild(sq);
+    inner.appendChild(front);
+    inner.appendChild(back);
+    sq.appendChild(inner);
+    grid.appendChild(sq);
   }
 }
 
@@ -157,7 +150,6 @@ document.getElementById('editBtn').addEventListener('click',()=>{const p=profile
 document.getElementById('saveBtn').addEventListener('click',()=>{const name=document.getElementById('fName').value.trim();const year=document.getElementById('fYear').value.trim();const bio=document.getElementById('fBio').value.trim();const file=document.getElementById('fPic').files[0];if(!name){alert('Please enter name');return;}function write(imgData){profiles[currentIndex]={name,year,bio,img:imgData};localStorage.setItem('everme_profiles',JSON.stringify(profiles));modalBg.style.display='none';renderGrid()}if(file){const reader=new FileReader();reader.onload=function(e){write(e.target.result)};reader.readAsDataURL(file)}else{if(editing && profiles[currentIndex] && profiles[currentIndex].img){write(profiles[currentIndex].img)}else{alert('Please choose a photo to upload (required for this prototype).')}}});
 
 document.getElementById('cancelBtn').addEventListener('click',()=>{modalBg.style.display='none'});
-
 document.getElementById('closeView').addEventListener('click',()=>{viewBg.style.display='none'});
 modalBg.addEventListener('click',(e)=>{if(e.target===modalBg)modalBg.style.display='none'});
 viewBg.addEventListener('click',(e)=>{if(e.target===viewBg)viewBg.style.display='none'});
